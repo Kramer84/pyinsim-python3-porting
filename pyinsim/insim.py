@@ -80,6 +80,7 @@ ISP_TTC = 61
 ISP_SLC = 62
 ISP_CSC = 63
 ISP_CIM = 64
+ISP_MAL = 65
 
 # Relay packets.
 IRP_ARQ = 250
@@ -117,6 +118,7 @@ TINY_NCI = 23
 TINY_ALC = 24
 TINY_AXM = 25
 TINY_SLC = 26
+TINY_MAL = 27
 
 # Enum for IS_SMALL sub-type
 SMALL_NONE = 0
@@ -819,6 +821,33 @@ class IS_SLC(object):
         self.Size, self.Type, self.ReqI, self.UCID, self.CName = self.pack_s.unpack(data)
         self.CName = _eat_null_chars(self.CName)
         return self
+
+MAL_MAX_MODS = 120
+
+class IS_MAL(object):
+    """Mods ALlowed - variable size
+    """
+    pack_s = struct.Struct('8B120I')  # 120 unsigned
+    def __init__(self, ReqI=0, SkinID=[]):
+        """Initialise a new IS_MAL packet.
+        """
+        NumM = len(SkinID)
+        self.Size = 8 + NumM * 4
+        self.Type = ISP_MAL   # ISP_MAL
+        self.ReqI = ReqI   # 0 unless this is a reply to a TINY_MAL request
+        self.NumM = NumM   # number of mods in this packet
+        self.UCID = 0   # unique id of the connection that updated the list
+        self.Flags = 0   # zero (for now)
+        self.Sp2 = 0
+        self.Sp3 = 0
+        self.SkinID = SkinID # SkinID of each mod in compressed format, 0 to MAL_MAX_MODS (NumM)
+    def pack(self):
+        return self.pack_s.pack(self.Size, self.Type, self.ReqI, self.NumM, self.UCID, self.Flags, self.Sp2, self.Sp3, self.SkinID)
+    def unpack(self, data):
+        self.Size, self.Type, self.ReqI, self.NumM, self.UCID, self.Flags, self.Sp2, self.Sp3, self.SkinID  = self.pack_s.unpack(data)
+        return self
+
+
 
 class IS_CIM(object):
     """Conn Interface Mode
@@ -1545,6 +1574,28 @@ JRR_7 = 7
 
 class IS_JRR(object):
     pack_s = struct.Struct('8B2h4B')
+    def __init__(self, ReqI=0, PLID=0, UCID=0, JRRAction = 1, X=0, Y=0, Zbyte=0, Flags=0, Index=0, Heading=0):
+        """Send reply to a join request
+        Set the ISF_REQ_JOIN flag in the IS_ISI to receive join requests
+        A join request is seen as an IS_NPL packet with ZERO in the NumP field
+        An immediate response (e.g. within 1 second) is required using an IS_JRR packet
+        """
+        self.Size = 16
+        self.Type = ISP_JRR
+        self.ReqI = ReqI
+        self.PLID = PLID # No PLID defined if response to join request
+        self.UCID = UCID # set when this is a reply to a join request - ignored when moving a car
+        self.JRRAction = JRRAction #1 - allow / 0 - reject (should send message to user)
+        self.Sp2 = 0
+        self.Sp3 = 0
+        self.X = X
+        self.Y = Y
+        self.Zbyte = Zbyte
+        self.Flags = Flags # 0: use default start point / Flags = 0x80: set start point
+        self.Index = Index
+        self.Heading = Heading
+    def pack(self):
+        return self.pack_s.pack(self.Size, self.Type, self.ReqI, self.PLID, self.UCID, self.JRRAction, self.Sp2, self.Sp3, self.X, self.Y, self.Zbyte, self.Flags, self.Index, self.Heading)
     def unpack(self, data):
         self.Size, self.Type, self.ReqI, self.PLID, self.UCID, self.JRRAction, self.Sp2, self.Sp3, self.X, self.Y, self.Zbyte, self.Flags, self.Index, self.Heading = self.pack_s.unpack(data)
         return self
@@ -1552,8 +1603,8 @@ class IS_JRR(object):
 class CarHCP(object):
     pack_s = struct.Struct('2B')
     def __init__(self, H_Mass=0, H_TRes=0):
-        self.H_Mass = H_Mass
-        self.H_TRes = H_TRes
+        self.H_Mass = H_Mass # 0 to 200 - added mass (kg)
+        self.H_TRes = H_TRes # 0 to  50 - intake restriction
     def pack(self):
         return self.pack_s.pack(self.H_Mass, self.H_TRes)
 
