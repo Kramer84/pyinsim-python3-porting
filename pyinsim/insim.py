@@ -10,7 +10,7 @@ import struct
 import math
 
 
-INSIM_VERSION = 8
+INSIM_VERSION = 9
 MAX_PLAYERS = 40
 
 
@@ -914,10 +914,10 @@ class IS_NPL(object):
     """New PLayer joining race (if PLID already exists, then leaving pits)
 
     """
-    pack_s = struct.Struct('6BH23sx8s3sx15sx8Bi4B')
+    pack_s = struct.Struct('6BH23sx8s3sx15sx16B') # insim ver 8 : '6BH23sx8s3sx15sx8Bi4B'
     def unpack(self, data):
         self.Tyres = [0,0,0,0]
-        self.Size, self.Type, self.ReqI, self.PLID, self.UCID, self.PType, self.Flags, self.PName, self.Plate, self.CName, self.SName, self.Tyres[0], self.Tyres[1], self.Tyres[2], self.Tyres[3], self.H_Mass, self.H_TRes, self.Model, self.Pass, self.Spare, self.SetF, self.NumP, self.Sp2, self.Sp3 = self.pack_s.unpack(data)
+        self.Size, self.Type, self.ReqI, self.PLID, self.UCID, self.PType, self.Flags, self.PName, self.Plate, self.CName, self.SName, self.Tyres[0], self.Tyres[1], self.Tyres[2], self.Tyres[3], self.H_Mass, self.H_TRes, self.Model, self.RWAdj, self.FWAdj, self.Sp2, self.Sp3, self.SetF, self.NumP, self.Config, self.Fuel  = self.pack_s.unpack(data)
         self.PName = _eat_null_chars(self.PName)
         #self.Plate = _eat_null_chars(self.Plate) # No trailing zero
         self.CName = _eat_null_chars(self.CName)
@@ -948,7 +948,7 @@ class IS_LAP(object):
     """
     pack_s = struct.Struct('4B2I2H4B')
     def unpack(self, data):
-        self.Size, self.Type, self.ReqI, self.PLID, self.LTime, self.ETime, self.LapsDone, self.Flags, self.Sp0, self.Penalty, self.NumStops, self.Sp3 = self.pack_s.unpack(data)
+        self.Size, self.Type, self.ReqI, self.PLID, self.LTime, self.ETime, self.LapsDone, self.Flags, self.Sp0, self.Penalty, self.NumStops, self.Fuel200 = self.pack_s.unpack(data)
         return self
 
 class IS_SPX(object):
@@ -957,7 +957,7 @@ class IS_SPX(object):
     """
     pack_s = struct.Struct('4B2I4B')
     def unpack(self, data):
-        self.Size, self.Type, self.ReqI, self.PLID, self.STime, self.ETime, self.Split, self.Penalty, self.NumStops, self.Sp3 = self.pack_s.unpack(data)
+        self.Size, self.Type, self.ReqI, self.PLID, self.STime, self.ETime, self.Split, self.Penalty, self.NumStops, self.Fuel200 = self.pack_s.unpack(data)
         return self
 
 class IS_PIT(object):
@@ -967,7 +967,7 @@ class IS_PIT(object):
     pack_s = struct.Struct('4B2H8B2I')
     def unpack(self, data):
         self.Tyres = [0, 0, 0, 0]
-        self.Size, self.Type, self.ReqI, self.PLID, self.LapsDone, self.Flags, self.Sp0, self.Penalty, self.NumStops, self.Sp3, self.Tyres[0], self.Tyres[1], self.Tyres[2], self.Tyres[3], self.Work, self.Spare = self.pack_s.unpack(data)
+        self.Size, self.Type, self.ReqI, self.PLID, self.LapsDone, self.Flags, self.FuelAdd, self.Penalty, self.NumStops, self.Sp3, self.Tyres[0], self.Tyres[1], self.Tyres[2], self.Tyres[3], self.Work, self.Spare = self.pack_s.unpack(data)
         return self
 
 class IS_PSF(object):
