@@ -11,32 +11,39 @@ def new_connection(insim, ncn):
     # Add a new connection to the connections dict.
     connections[ncn.UCID] = ncn
     print('New connection: {}'.format(autstr(ncn.UName)))
-    
-    
+
+
 def connection_left(insim, cnl):
     # Get connection from connections dict.
     ncn = connections[cnl.UCID]
     # Delete the connection from the dict.
     del connections[cnl.UCID]
     print('Connection left: {}'.format(autstr(ncn.UName)))
-    
-    
+
+
 def new_player(insim, npl):
     # Add the new player to the players dict.
     players[npl.PLID] = npl
     print('New player: {}'.format(pyinsim.stripcols(autstr(npl.PName))))
-    
-    
+
+
 def player_left(insim, pll):
     # Get player from the players dict.
     npl = players[pll.PLID]
     # Delete them from the dict.
     del players[pll.PLID]
     print('Player left: {}'.format(pyinsim.stripcols(autstr(npl.PName))))
-    
 
-# Init new InSim object.
-insim = pyinsim.insim('127.0.0.1', 58672, Admin='YourAdminPassword')
+
+with open('example_credentials.txt') as f :
+    content = f.read().split('\n')
+    IP   = content[0].split("=")[1].strip()
+    PORT = int(content[1].split("=")[1].strip())
+    PASS = content[2].split("=")[1].strip()
+
+# Initialize the InSim object
+insim = pyinsim.insim(IP, PORT, Admin=PASS)
+
 
 # Bind events for the connection and player packets.
 insim.bind(pyinsim.ISP_NCN, new_connection)

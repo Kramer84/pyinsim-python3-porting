@@ -445,7 +445,7 @@ class IS_ISI(object):
             IName    : A short name for your program
 
         """
-        self.Size = 44
+        self.Size = int(44/4)
         self.Type = ISP_ISI
         self.ReqI = ReqI
         self.Zero = 0
@@ -483,7 +483,7 @@ class IS_TINY(object):
             SubT : subtype from ``TINY_*`` enumeration (e.g. ``TINY_REN``)
 
         """
-        self.Size = 4
+        self.Size = int(4/4)
         self.Type = ISP_TINY
         self.ReqI = ReqI
         self.SubT = SubT
@@ -507,7 +507,7 @@ class IS_SMALL(object):
             UVal : value (e.g. for ``SMALL_SSP`` this would be the OutSim packet rate)
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_SMALL
         self.ReqI = ReqI
         self.SubT = SubT
@@ -524,7 +524,7 @@ class IS_TTC(object):
     """
     pack_s = struct.Struct('8B')
     def __init__(self, ReqI=0, SubT=TTC_NONE, UCID=0, B1=0, B2=0, B3=0):
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_TTC
         self.ReqI = ReqI
         self.SubT = SubT    # From TTC_*
@@ -561,7 +561,7 @@ class IS_SCH(object):
             Flags : bit 0 : SHIFT / bit 1 : CTRL
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_SCH
         self.ReqI = ReqI
         self.Zero = 0
@@ -587,7 +587,7 @@ class IS_SFP(object):
             OffOn : 0 = off / 1 = on
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_SFP
         self.ReqI = ReqI
         self.Zero = 0
@@ -611,7 +611,7 @@ class IS_SCC(object):
             InGameCam : InGameCam (as reported in StatePack)
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_SCC
         self.ReqI = ReqI
         self.Zero = 0
@@ -643,7 +643,7 @@ class IS_CPP(object):
             Flags     : state flags from ``ISS_*``
 
         """
-        self.Size = 32
+        self.Size = int(32/4)
         self.Type = ISP_CPP
         self.ReqI = ReqI
         self.Zero = 0
@@ -709,7 +709,7 @@ class IS_MST(object):
             Msg  : message (64 characters)
 
         """
-        self.Size = 68
+        self.Size = int(68/4)
         self.Type = ISP_MST
         self.ReqI = ReqI
         self.Zero = 0
@@ -733,7 +733,7 @@ class IS_MTC(object):
             Msg  : Message (128 characters)
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_MTC
         self.ReqI = ReqI
         self.Sound = Sound
@@ -762,7 +762,7 @@ class IS_MOD(object):
             Height : 0 means go to window
 
         """
-        self.Size = 20
+        self.Size = int(20/4)
         self.Type = ISP_MOD
         self.ReqI = ReqI
         self.Zero = 0
@@ -832,7 +832,7 @@ class IS_MAL(object):
         """Initialise a new IS_MAL packet.
         """
         NumM = len(SkinID)
-        self.Size = 8 + NumM * 4
+        self.Size = int(8/4) + NumM * 4
         self.Type = ISP_MAL   # ISP_MAL
         self.ReqI = ReqI   # 0 unless this is a reply to a TINY_MAL request
         self.NumM = NumM   # number of mods in this packet
@@ -917,7 +917,7 @@ class IS_NPL(object):
     pack_s = struct.Struct('6BH23sx8s3sx15sx16B') # insim ver 8 : '6BH23sx8s3sx15sx8Bi4B'
     def unpack(self, data):
         self.Tyres = [0,0,0,0]
-        self.Size, self.Type, self.ReqI, self.PLID, self.UCID, self.PType, self.Flags, self.PName, self.Plate, self.CName, self.SName, self.Tyres[0], self.Tyres[1], self.Tyres[2], self.Tyres[3], self.H_Mass, self.H_TRes, self.Model, self.RWAdj, self.FWAdj, self.Sp2, self.Sp3, self.SetF, self.NumP, self.Config, self.Fuel  = self.pack_s.unpack(data)
+        self.Size, self.Type, self.ReqI, self.PLID, self.UCID, self.PType, self.Flags, self.PName, self.Plate, self.CName, self.SName, self.Tyres[0], self.Tyres[1], self.Tyres[2], self.Tyres[3], self.H_Mass, self.H_TRes, self.Model, self.Pass, self.RWAdj, self.FWAdj, self.Sp2, self.Sp3, self.SetF, self.NumP, self.Config, self.Fuel  = self.pack_s.unpack(data)
         self.PName = _eat_null_chars(self.PName)
         #self.Plate = _eat_null_chars(self.Plate) # No trailing zero
         self.CName = _eat_null_chars(self.CName)
@@ -1069,7 +1069,7 @@ class IS_REO(object):
             PLID : all PLIDs in new order
 
         """
-        self.Size = 4 + MAX_PLAYERS
+        self.Size = int(4/4) + MAX_PLAYERS
         self.Type = ISP_REO
         self.ReqI = ReqI
         self.NumP = len(PLID)
@@ -1139,7 +1139,7 @@ class IS_MSX(object):
             Msg  : last byte must be zero
 
         """
-        self.Size = 100
+        self.Size = int(100/4)
         self.Type = ISP_MSX
         self.ReqI = ReqI
         self.Zero = 0
@@ -1161,7 +1161,7 @@ class IS_MSL(object):
             Msg   : Message
 
         """
-        self.Size = 132
+        self.Size = int(132/4)
         self.Type = ISP_MSL
         self.ReqI = ReqI
         self.Sound = Sound
@@ -1195,7 +1195,7 @@ class IS_BFN(object):
             Inst     : used internally by InSim
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_BFN
         self.ReqI = ReqI
         self.SubT = SubT
@@ -1250,7 +1250,7 @@ class IS_BTN(object):
             Text    : 0 to 240 characters of text
 
         """
-        self.Size = 12
+        self.Size = int(12/4)
         self.Type = ISP_BTN
         self.ReqI = ReqI
         self.UCID = UCID
@@ -1305,7 +1305,7 @@ class IS_RIP(object):
             RName   : zero or replay name: last byte must be zero
 
         """
-        self.Size = 76
+        self.Size = int(76/4)
         self.Type = ISP_RIP
         self.ReqI = ReqI
         self.Error = Error
@@ -1337,7 +1337,7 @@ class IS_SSH(object):
             BMP   : name of screenshot file: last byte must be zero
 
         """
-        self.Size = 40
+        self.Size = int(40/4)
         self.Type = ISP_SSH
         self.ReqI = ReqI
         self.Error = Error
@@ -1447,7 +1447,7 @@ class IS_OCO(object):
                         bit 3 (8) : green
 
         """
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_OCO
         self.ReqI = 0
         self.Zero = 0
@@ -1497,7 +1497,7 @@ PMO_AVOID_CHECK = 8
 class IS_AXM(object):
     pack_s = struct.Struct('8B')
     def __init__(self, ReqI=0, NumO=0, UCID=0, PMOAction=0, PMOFlags=0, Sp3=0, Info=[]):
-        self.Size = 8
+        self.Size = int(8/4)
         self.Type = ISP_OCO
         self.ReqI = ReqI
         self.NumO = NumO
@@ -1551,7 +1551,7 @@ CAR_ALL = 0xffffffff
 class IS_PLC(object):
     pack_s = struct.Struct('8BI')
     def __init__(self, UCID=0, Cars=CAR_NONE):
-        self.Size = 12
+        self.Size = int(12/4)
         self.Type = ISP_PLC
         self.ReqI = 0
         self.Zero = 0
@@ -1580,7 +1580,7 @@ class IS_JRR(object):
         A join request is seen as an IS_NPL packet with ZERO in the NumP field
         An immediate response (e.g. within 1 second) is required using an IS_JRR packet
         """
-        self.Size = 16
+        self.Size = int(16/4)
         self.Type = ISP_JRR
         self.ReqI = ReqI
         self.PLID = PLID # No PLID defined if response to join request
@@ -1611,7 +1611,7 @@ class CarHCP(object):
 class IS_HCP(object):
     pack_s = struct.Struct('4B')
     def __init__(self, ReqI=0, Zero=0, Info=[]):
-        self.Size = 68
+        self.Size = int(68/4)
         self.Type = ISP_HCP
         self.ReqI = ReqI
         self.Zero = Zero
@@ -1640,7 +1640,7 @@ IR_ERR_NOSPEC   = 6
 class IR_HLR(object):
     pack_s = struct.Struct('4B')
     def __init__(self, ReqI=0):
-        self.Size = 4
+        self.Size = int(4/4)
         self.Type = IRP_HLR
         self.ReqI = ReqI
         self.Sp0 = 0
@@ -1665,7 +1665,7 @@ class HInfo(object):
 class IR_SEL(object):
     pack_s = struct.Struct('4B31sx15sx15sx')
     def __init__(self, ReqI=0, HName=b'', Admin=b'', Spec=b''):
-        self.Size = 68
+        self.Size = int(68/4)
         self.Type = IRP_SEL
         self.ReqI = ReqI
         self.Zero = 0
@@ -1678,7 +1678,7 @@ class IR_SEL(object):
 class IR_ARQ(object):
     pack_s = struct.Struct('4B')
     def __init__(self, ReqI=0):
-        self.Size = 4
+        self.Size = int(4/4)
         self.Type = IRP_ARQ
         self.ReqI = ReqI
         self.Sp0 = 0

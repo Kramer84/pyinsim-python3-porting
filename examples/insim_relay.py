@@ -6,7 +6,7 @@ import pyinsim
 HOST_NAME = 'RallyX Layout Bw'
 
 def autstr(ob):
-    """AutoString 
+    """AutoString
     Automatically converts bytes to string if it has to
     """
     return ob.decode() if type(ob)==bytes else ob

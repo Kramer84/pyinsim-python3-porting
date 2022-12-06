@@ -4,10 +4,10 @@ import pyinsim
 
 def init(insim):
     print('InSim initialized')
-    
+
 def closed(insim):
     print('InSim connection closed')
-    
+
 def error(insim):
     print('InSim error:')
     import traceback
@@ -16,7 +16,14 @@ def error(insim):
 def all(insim, packet):
     print(vars(packet))
 
-insim = pyinsim.insim('127.0.0.1', 58672, Admin='YourAdminPassword')
+with open('example_credentials.txt') as f :
+    content = f.read().split('\n')
+    IP   = content[0].split("=")[1].strip()
+    PORT = int(content[1].split("=")[1].strip())
+    PASS = content[2].split("=")[1].strip()
+
+# Initialize the InSim object
+insim = pyinsim.insim(IP, PORT, Admin=PASS)
 
 insim.bind(pyinsim.EVT_INIT, init)
 insim.bind(pyinsim.EVT_CLOSE, closed)

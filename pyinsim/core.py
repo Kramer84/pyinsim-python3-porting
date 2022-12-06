@@ -340,8 +340,11 @@ class _TcpSocket(asyncore.dispatcher):
             size = self._recv_buff[0]
 
             # Check size is multiple of four.
-            if size % 4 > 0:
+            # Remove check with InSim 9 version
+            if size % 4 > 0 and insim_.INSIM_VERSION < 9:
                 raise InSimError('TCP packet size not a multiple of four')
+            if insim_.INSIM_VERSION >= 9 :
+                size *= 4
 
             yield self._recv_buff[:size]
             self._recv_buff = self._recv_buff[size:]
@@ -520,7 +523,7 @@ class _InSim(_Binding):
         msg = msg.decode() if type(msg)==bytes else msg #Encoding for Python 3
         if ucid or plid:
             self._tcp.send(insim_.IS_MTC(Msg=msg, UCID=ucid, PLID=plid).pack())
-        elif msg.startswith(b'/') and len(msg) < 64:
+        elif msg.startswith('/') and len(msg) < 64:
             self._tcp.send(insim_.IS_MST(Msg=msg).pack())
         elif len(msg) < 96:
             self._tcp.send(insim_.IS_MSX(Msg=str(msg).encode("utf-8")).pack())
